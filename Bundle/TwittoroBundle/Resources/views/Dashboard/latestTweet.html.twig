@@ -1,0 +1,19 @@
+{% extends 'OroDashboardBundle:Dashboard:quickLaunchpad.html.twig' %}
+{% set widgetName = 'latest-tweet'  %}
+{% block content %}
+    <ul class="quick-launchpad-toolbar">
+        {% set itemWidth = items|length > 0 ? (100 / items|length)|round(1) : 100 %}
+        {% for item in items %}
+            <li style="width: {{ loop.last ? 100 - ((items|length - 1) * itemWidth) : itemWidth }}%">
+                <a href="#">
+                    <span class="title-box">
+                            <span style="color:#F5BC25">{{item.label}}</span> 
+                            <h3>{{item.username}}</h3></span>
+                    <span class="list-content">
+                        <b><span class="latest-tweet">{{item.latestTweet}}</span></b>
+                    </span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

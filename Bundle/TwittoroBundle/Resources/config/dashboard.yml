@@ -1,0 +1,36 @@
+oro_dashboard_config:
+    widgets:
+        number_of_tweets:
+            label:      Number of Tweets
+            route:      tfone_twittoro_dashboard_number_of_tweets_widget
+            acl:        tfone_twittoro_view
+        latest_tweet:
+            label:      Latest Tweet
+            route:      tfone_twittoro_dashboard_latest_tweet_widget
+            acl:        tfone_twittoro_view
+        top_tweeter:
+            label:      Top Tweeter
+            route:      tfone_twittoro_dashboard_top_tweeter_widget
+            acl:        tfone_twittoro_view
+        tweets_by_username:
+            label:      tfone.twittoro.tweets_by_username.title
+            route:      tfone_twittoro_dashboard_tweets_by_username_chart
+            acl:        tfone_twittoro_view
+        tweets_over_time:
+            label:      tfone.twittoro.tweets_over_time.title
+            route:      tfone_twittoro_dashboard_tweets_over_time_chart
+            acl:        tfone_twittoro_view   
+    dashboards:
+        tweet_statistics:
+            label: tfone.twittoro.tweets_dashboard.title
+            widgets:
+                number_of_tweets:
+                    position:   15
+                latest_tweet:
+                    position:   11
+                top_tweeter:
+                    position:   10
+                tweets_by_username:
+                    position:   13
+                tweets_over_time:
+                    position:   12

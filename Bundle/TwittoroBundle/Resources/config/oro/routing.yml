@@ -1,0 +1,9 @@
+tfone_twittoro_bundle:
+    resource:     "@TfoneTwittoroBundle/Controller"
+    type:         annotation
+    prefix:       /tfone
+##dashboard
+tfone_twittoro_dashboard:
+    resource:     "@TfoneTwittoroBundle/Controller/Dashboard"
+    type:         annotation
+    prefix:       /dashboard

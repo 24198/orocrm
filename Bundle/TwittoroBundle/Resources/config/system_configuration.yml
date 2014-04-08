@@ -1,0 +1,82 @@
+oro_system_configuration:
+    groups:
+        tfone:
+            icon:  icon-retweet
+            title: tfone.twittoro.update_tweets.config.group.tfone.label
+        tfone_twittoro:
+            title: tfone.twittoro.update_tweets.config.group.tfone_twittoro.label
+        tfone_twittoro_settings:
+            icon:  icon-gear
+            title: tfone.twittoro.update_tweets.config.group.tfone_twittoro_settings.label
+        tfone_twittoro_settings_update_tweets:
+            title: tfone.twittoro.update_tweets.config.group.tfone_twittoro_settings_update_tweets.label
+
+    fields:
+        tfone_twittoro.update_tweets_enabled:
+            type: choice
+            priority: 60
+            options:
+                label: tfone.twittoro.update_tweets.config.enabled.label
+                choices:
+                    - No
+                    - Yes            
+        tfone_twittoro.update_tweets_hashtag:
+            type: text
+            priority: 50
+            options:
+                label: tfone.twittoro.update_tweets.config.hashtag.label
+                tooltip: tfone.twittoro.form.tooltip.hashtag
+        tfone_twittoro.update_tweets_oauth_access_token:
+            type: text
+            priority: 45
+            options:
+                label: tfone.twittoro.update_tweets.config.oauth_access_token.label
+                required: true
+        tfone_twittoro.update_tweets_oauth_access_token_secret:
+            type: text
+            priority: 40
+            options:
+                label: tfone.twittoro.update_tweets.config.oauth_access_token_secret.label
+                required: true
+        tfone_twittoro.update_tweets_consumer_key:
+            type: text
+            priority: 30
+            options:
+                label: tfone.twittoro.update_tweets.config.consumer_key.label
+                required: true
+        tfone_twittoro.update_tweets_consumer_secret:
+            type: text
+            priority: 20
+            options:
+                label: tfone.twittoro.update_tweets.config.consumer_secret.label
+                required: true
+        tfone_twittoro.update_tweets_api_url:
+            type: text
+            priority: 15
+            options:
+                label: tfone.twittoro.update_tweets.config.api_url.label
+                required: true
+        tfone_twittoro.update_tweets_cron_schedule:
+            type: text
+            priority: 10
+            options:
+                label: tfone.twittoro.update_tweets.config.cron_schedule.label
+                required: false
+    tree:
+        system_configuration:
+            tfone:
+                children:
+                    tfone_twittoro:
+                        children:
+                            tfone_twittoro_settings:
+                                children:
+                                    tfone_twittoro_settings_update_tweets:
+                                        children:
+                                            - tfone_twittoro.update_tweets_enabled
+                                            - tfone_twittoro.update_tweets_hashtag
+                                            - tfone_twittoro.update_tweets_oauth_access_token
+                                            - tfone_twittoro.update_tweets_oauth_access_token_secret                                            
+                                            - tfone_twittoro.update_tweets_consumer_key
+                                            - tfone_twittoro.update_tweets_consumer_secret
+                                            - tfone_twittoro.update_tweets_api_url
+                                            - tfone_twittoro.update_tweets_cron_schedule

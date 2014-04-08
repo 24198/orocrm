@@ -1,0 +1,28 @@
+parameters:    
+    tfone_twittoro.helper_formatter.class:              Tfone\Bundle\TwittoroBundle\Helpers\Formatter
+    
+    tfone_twittoro.tweet_processor.class:               Tfone\Bundle\TwittoroBundle\Provider\TweetProcessor
+    tfone_twittoro.rest_transport.class:                Tfone\Bundle\TwittoroBundle\Provider\RESTTransport   
+        
+services:
+    
+    # tweets transport    
+    tfone_twittoro.rest_transport:
+        class: %tfone_twittoro.rest_transport.class%
+        arguments:
+            - @tfone_twittoro.helper_formatter
+        
+    # hashtag formatter    
+    tfone_twittoro.helper_formatter:
+        class: %tfone_twittoro.helper_formatter.class%
+          
+    # tweet processor
+    tfone_twittoro.tweet_processor:
+        class: %tfone_twittoro.tweet_processor.class%
+        arguments:
+            - @doctrine
+            - @doctrine.orm.entity_manager
+            - @translator
+            - @tfone_twittoro.helper_formatter
+            - @tfone_twittoro.rest_transport
+

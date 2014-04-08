@@ -1,0 +1,51 @@
+tfone:
+    twittoro:
+        
+        ##System configuration group translations
+        update_tweets.config.group.tfone.label: Tfone
+        update_tweets.config.group.tfone_twittoro.label: Tfone Twittoro
+        update_tweets.config.group.tfone_twittoro_settings.label: Settings
+        update_tweets.config.group.tfone_twittoro_settings_update_tweets.label: Update Tweets
+        
+        
+        ##System configuration fields translations
+        update_tweets.config.enabled.label: Enabled
+        update_tweets.config.oauth_access_token.label: OAuth Acces Token
+        update_tweets.config.oauth_access_token_secret.label: OAuth Acces Token Secret
+        update_tweets.config.consumer_key.label: API Consumer Key
+        update_tweets.config.consumer_secret.label: APP Consumer Secret
+        update_tweets.config.api_url.label: API url
+        update_tweets.config.cron_schedule.label: Cron Schedule
+        update_tweets.config.hashtag.label: Base Hashtag
+        
+        ##Entity translations 
+        tweet.entity_label: Tweet
+        
+        ##Command translations
+        update_tweets.oauth_access_token_not_configured: Your Oauth Access Token is not configured
+        update_tweets.oauth_access_token_secret_not_configured: Your Oauth Access Token Secret is not configured
+        update_tweets.consumer_key_not_configured: Your Consumer Key is not configured
+        update_tweets.consumer_secret_not_configured: Your Consumer Secret is not configured
+        update_tweets.url_not_configured: The API url is not defined, cannot update tweets.
+        update_tweets.tweets_have_been_created: Tweets have been updated!
+        update_tweets.no_new_tweets_found: No new tweets found for
+        update_tweets.record_created: record created
+        
+        ##Dashboard
+        tweets_dashboard.title: OroCRM Twitter statistics
+        
+        ##Dashboard::normal chart
+        tweets_by_username.title: "Tweets by Username for #orocrm"
+        
+        ##Dashboard::line chart
+        tweets_over_time.title: "Tweets by over time for #orocrm"
+        
+        ##Helper Formatter
+        update_tweets.hashtag_not_specified: Hashtag is not specified
+        update_tweets.hashtag_already_formatted: Hashtag is already formatted
+        
+        
+        
+        form:
+            tooltip:    
+                hashtag: "Base hashtag is optional. This hashtag will always be your hashtag for all the widgets in your dashboard. This hashtag should not contain the # sign"
