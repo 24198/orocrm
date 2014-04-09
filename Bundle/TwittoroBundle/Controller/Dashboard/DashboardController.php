@@ -17,13 +17,13 @@ class DashboardController extends Controller
      * )
      * @Template("TfoneTwittoroBundle:Dashboard:tweetsByUsername.html.twig")
      */
-    public function tweetsByUsernameAction($widget)
+    public function tweetsByUsernameAction($widget, $hashtag)
     {
         return array_merge(
             [
                 'items' => $this->getDoctrine()
                         ->getRepository('TfoneTwittoroBundle:Tweet')
-                        ->getTweetsByUsername($this->get('oro_security.acl_helper'), 'orocrm')
+                        ->getTweetsByUsername($this->get('oro_security.acl_helper'), $hashtag)
             ],
             $this->get('oro_dashboard.manager')->getWidgetAttributesForTwig($widget)
         );
@@ -31,19 +31,19 @@ class DashboardController extends Controller
 
     /**
      * @Route(
-     *      "/tweets_over_time/chart/{widget}",
+     *      "/tweets_over_time/chart/{widget}/{hashtag}",
      *      name="tfone_twittoro_dashboard_tweets_over_time_chart",
-     *      requirements={"widget"="[\w_-]+"}
+     *      requirements={"widget"="[\w_-]+", "hashtag"="[\w-]+"}
      * )
      * @Template("TfoneTwittoroBundle:Dashboard:tweetsOverTime.html.twig")
      */
-    public function tweetsOverTimeAction($widget)
+    public function tweetsOverTimeAction($widget, $hashtag)
     {
         return array_merge( 
             [
                 'items' => $this->getDoctrine()
                         ->getRepository('TfoneTwittoroBundle:Tweet')
-                        ->getTweetsOverTime($this->get('oro_security.acl_helper'), 'orocrm')
+                        ->getTweetsOverTime($this->get('oro_security.acl_helper'), $hashtag)
             ],
             $this->get('oro_dashboard.manager')->getWidgetAttributesForTwig($widget)
         );
@@ -51,52 +51,55 @@ class DashboardController extends Controller
     
     /**
      * @Route(
-     *      "/tweets_username/widget/",
-     *      name="tfone_twittoro_dashboard_number_of_tweets_widget"
+     *      "/tweets_username/widget/{hashtag}",
+     *      name="tfone_twittoro_dashboard_number_of_tweets_widget",
+     *      requirements={"hashtag"="[\w-]+"}
      * )
      * @Template("TfoneTwittoroBundle:Dashboard:numberOfTweets.html.twig")
      */
-    public function numberOfTweetsAction()
+    public function numberOfTweetsAction($hashtag)
     {
         return 
             [
                 'items' => $this->getDoctrine()
                         ->getRepository('TfoneTwittoroBundle:Tweet')
-                        ->getNumberOfTweets($this->get('oro_security.acl_helper'), 'orocrm')
+                        ->getNumberOfTweets($this->get('oro_security.acl_helper'), $hashtag)
             ];
     }
 
     /**
      * @Route(
-     *      "/latest_tweet/widget/",
-     *      name="tfone_twittoro_dashboard_latest_tweet_widget"
+     *      "/latest_tweet/widget/{hashtag}",
+     *      name="tfone_twittoro_dashboard_latest_tweet_widget",
+     *      requirements={"hashtag"="[\w-]+"}
      * )
      * @Template("TfoneTwittoroBundle:Dashboard:latestTweet.html.twig")
      */
-    public function latestTweetAction()
+    public function latestTweetAction($hashtag)
     {
         return 
             [
                 'items' => $this->getDoctrine()
                         ->getRepository('TfoneTwittoroBundle:Tweet')
-                        ->getLatestTweet($this->get('oro_security.acl_helper'), 'orocrm')
+                        ->getLatestTweet($this->get('oro_security.acl_helper'), $hashtag)
             ];
     }
 
     /**
      * @Route(
-     *      "/top_tweet/widget/",
-     *      name="tfone_twittoro_dashboard_top_tweeter_widget"
+     *      "/top_tweet/widget/{hashtag}",
+     *      name="tfone_twittoro_dashboard_top_tweeter_widget",
+     *      requirements={"hashtag"="[\w-]+"}
      * )
      * @Template("TfoneTwittoroBundle:Dashboard:topTweeter.html.twig")
      */
-    public function topTweeterAction()
+    public function topTweeterAction($hashtag)
     {
         return 
             [
                 'items' => $this->getDoctrine()
                         ->getRepository('TfoneTwittoroBundle:Tweet')
-                        ->getTopTweeter($this->get('oro_security.acl_helper'), 'orocrm')
+                        ->getTopTweeter($this->get('oro_security.acl_helper'), $hashtag)
             ];
     }
 }

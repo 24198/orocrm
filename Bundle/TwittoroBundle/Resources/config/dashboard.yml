@@ -3,14 +3,17 @@ oro_dashboard_config:
         number_of_tweets:
             label:      Number of Tweets
             route:      tfone_twittoro_dashboard_number_of_tweets_widget
+            route_parameters: { hashtag: bayman }
             acl:        tfone_twittoro_view
         latest_tweet:
             label:      Latest Tweet
             route:      tfone_twittoro_dashboard_latest_tweet_widget
+            route_parameters: { hashtag: bayman }
             acl:        tfone_twittoro_view
         top_tweeter:
             label:      Top Tweeter
             route:      tfone_twittoro_dashboard_top_tweeter_widget
+            route_parameters: { hashtag: bayman }
             acl:        tfone_twittoro_view
         tweets_by_username:
             label:      tfone.twittoro.tweets_by_username.title
@@ -20,6 +23,7 @@ oro_dashboard_config:
         tweets_over_time:
             label:      tfone.twittoro.tweets_over_time.title
             route:      tfone_twittoro_dashboard_tweets_over_time_chart
+            route_parameters: { hashtag: bayman }
             acl:        tfone_twittoro_view   
     dashboards:
         tweet_statistics:

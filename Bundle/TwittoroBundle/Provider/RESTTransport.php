@@ -75,9 +75,7 @@ class RESTTransport {
                          CURLOPT_SSL_VERIFYPEER => false);
                    
         //make the call via curl
-        $feed = curl_init();
-        var_dump($options);
-        
+        $feed = curl_init();        
         curl_setopt_array($feed, $options);
         $responseJson = curl_exec($feed);        
         curl_close($feed);
