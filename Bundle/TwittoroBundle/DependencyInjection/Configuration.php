@@ -32,7 +32,7 @@ class Configuration implements ConfigurationInterface
                 'update_tweets_consumer_key' => ['value' => null],
                 'update_tweets_consumer_secret' => ['value' => null],                
                 'update_tweets_enabled' => ['value' => false, 'type' => 'bool'],                
-                'update_tweets_hashtag' => ['value' => null],               
+                'update_tweets_hashtag' => ['value' => 'orocrm'],               
             ]            
         );
         return $treeBuilder;

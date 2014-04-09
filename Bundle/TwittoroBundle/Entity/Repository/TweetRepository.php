@@ -52,7 +52,7 @@ class TweetRepository extends EntityRepository
             }
         }
 
-        return ['data' => $resultData, 'labels' => $labels];
+        return ['hashtag' => $hashtag, 'data' => $resultData, 'labels' => $labels];
     }
 
     /**
@@ -98,7 +98,7 @@ class TweetRepository extends EntityRepository
             $labels[$index] = $dataValue['tweet_stamp'];
         }
 
-        return ['data' => $resultData, 'labels' => $labels];
+        return ['hashtag' => $hashtag, 'data' => $resultData, 'labels' => $labels];
     }    
     
     /**
@@ -162,8 +162,11 @@ class TweetRepository extends EntityRepository
         $data = $aclHelper->apply($qb)
              ->getSingleScalarResult();
         
-        $resultData[0] = [ 'numboftweets' => (int)$data, 'label' => 'Number of tweets for '.$hashtag];
-                
+        if($data !== null) {
+            $resultData[0] = [ 'numboftweets' => (int)$data, 'label' => 'Number of tweets for '.$hashtag];
+        } else {
+            $resultData[0] = [ 'numboftweets' => null ];
+        }
         return $resultData;
     }
     
@@ -192,8 +195,11 @@ class TweetRepository extends EntityRepository
              ->getArrayResult();
 
         $counter = 0;
+        $resultData = []; 
         foreach ($data as $record) {
-            if($counter < 1) {
+            if($counter < 1 && !isset($record)) { 
+                $resultData[$counter] = [ 'latestTweet' => null ];
+            } else if($counter < 1) {
                 $resultData[$counter] = [ 'latestTweet' => $record['tweet'], 'label' => 'Latest tweet by', 'username' => $record['username']];
                 $counter++;
             }
@@ -228,8 +234,11 @@ class TweetRepository extends EntityRepository
              ->getArrayResult();
         
         $counter = 0;
+        $resultData = [];
         foreach ($data as $record) {
-            if($counter < 1) {
+            if($counter < 1 && !isset($record)) { 
+                $resultData[$counter] = [ 'topTweeter' => null ];
+            } else if($counter < 1) {
                 $resultData[$counter] = [ 'topTweeter' => $record['username'], 'label' => 'Top tweeter', 'tweetCount' => $record['tweet_count']];
                 $counter++;
             }

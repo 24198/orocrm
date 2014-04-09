@@ -1,17 +1,29 @@
 {% extends 'OroDashboardBundle:Dashboard:quickLaunchpad.html.twig' %}
 {% set widgetName = 'number-of-tweets'  %}
 {% block content %}
-    <ul class="quick-launchpad-toolbar">
-        {% set itemWidth = items|length > 0 ? (100 / items|length)|round(1) : 100 %}
-        {% for item in items %}
-            <li style="width: {{ loop.last ? 100 - ((items|length - 1) * itemWidth) : itemWidth }}%">
-                <a href="#">
-                    <span class="title-box" style="color:#F5BC25">{{item.label}}</span>
-                    <span class="list-content">
-                        <h2><span class="number-of-tweets">{{item.numboftweets}}</span></h2>
-                    </span>
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+    {% set hasData = false %}
+    {% for tweet in items %}
+        {% if tweet['numboftweets'] != null %}
+            {% set hasData = true %}
+        {% endif %}
+    {% endfor %}
+    {% if hasData %}
+        <ul class="quick-launchpad-toolbar">
+            {% set itemWidth = items|length > 0 ? (100 / items|length)|round(1) : 100 %}
+            {% for item in items %}
+                <li style="width: {{ loop.last ? 100 - ((items|length - 1) * itemWidth) : itemWidth }}%">
+                    <a href="#">
+                        <span class="title-box" style="color:#F5BC25">{{item.label}}</span>
+                        <span class="list-content">
+                            <h2><span class="number-of-tweets">{{item.numboftweets}}</span></h2>
+                        </span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="clearfix no-data">
+            <span>{{ 'oro.dashboard.no_data_found'|trans }}</span>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -11,9 +11,9 @@ class DashboardController extends Controller
 {
     /**
      * @Route(
-     *      "/tweets_username/chart/{widget}",
+     *      "/tweets_username/chart/{widget}/{hashtag}",
      *      name="tfone_twittoro_dashboard_tweets_by_username_chart",
-     *      requirements={"widget"="[\w_-]+"}
+     *      requirements={"widget"="[\w_-]+", "hashtag"="[\w-]+"}
      * )
      * @Template("TfoneTwittoroBundle:Dashboard:tweetsByUsername.html.twig")
      */

@@ -67,8 +67,8 @@ class UpdateTweetsCommand extends ContainerAwareCommand implements CronCommandIn
         
         //base hashtag, either from the config or from the commandline
         if(!$hashtag) {            
-            $logger->notice(sprintf('Updating tweets for all hashtags..'));
             $hashtag = $this->getConfig()->get('tfone_twittoro.update_tweets_hashtag');
+            $logger->notice(sprintf('Updating tweets for all hashtags #%s..', $hashtag));
         }else {
             $logger->notice(sprintf('Updating tweets for hashtag #%s..',$hashtag));
         }
@@ -77,9 +77,9 @@ class UpdateTweetsCommand extends ContainerAwareCommand implements CronCommandIn
             $logger->notice(sprintf('You did not enable the update tweet cron in the System Configuration Settings of your Application'));
             return;
         }
-        
+        $logger->notice($hashtag);
         //add the other configuration options from the backend to the config array. 
-        $config['hashtags'] = [ 'base' => $this->getConfig()->get('tfone_twittoro.update_tweets_hashtag'), 'optional' => $hashtag];
+        $config['hashtag'] = $hashtag;
         $config['oauthtoken'] = $oAuthToken = $this->getConfig()->get('tfone_twittoro.update_tweets_oauth_access_token');
         $config['oauthsecret'] = $oAuthTokenSecret = $this->getConfig()->get('tfone_twittoro.update_tweets_oauth_access_token_secret');
         $config['consumkey'] = $consumerKey = $this->getConfig()->get('tfone_twittoro.update_tweets_consumer_key');

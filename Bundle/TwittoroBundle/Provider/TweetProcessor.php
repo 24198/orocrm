@@ -71,7 +71,7 @@ class TweetProcessor {
      * @param array $config the config are all the config options from the system configuration
      */
     public function process($config) {               
-        $maxId = null;
+        $config['maxid'] = $maxId = null;
         if($this->hashtagExists($config['hashtag']) > 0) {
            $config['maxid'] = $maxId = $this->getMaxIdForHashtag($config['hashtag']);
         }
@@ -113,11 +113,11 @@ class TweetProcessor {
            //creating new tweet entity
            $tweetEntity = new Tweet();
            
-           $tweetEntity->setUsername($tweet->user->screen_name);
-           $tweetEntity->setTweet($tweet->text);
+           $tweetEntity->setUsername(mb_convert_encoding($tweet->user->screen_name, "UTF-8"));
+           $tweetEntity->setTweet(mb_convert_encoding($tweet->text, "UTF-8"));
            $tweetEntity->setRetweets((int)$tweet->retweet_count);          
            $tweetEntity->setTweetStamp(new \DateTime($tweet->created_at));
-           $tweetEntity->setHashtag($hashtag);
+           $tweetEntity->setHashtag(mb_convert_encoding($hashtag, "UTF-8"));
            $tweetEntity->setMaxId($tweet->id_str);
            $tweetEntity->setCreatedAt(new \DateTime());
            $tweetEntity->setUpdatedAt(new \DateTime());

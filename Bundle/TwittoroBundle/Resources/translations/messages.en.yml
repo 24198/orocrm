@@ -32,13 +32,13 @@ tfone:
         update_tweets.record_created: record created
         
         ##Dashboard
-        tweets_dashboard.title: OroCRM Twitter statistics
+        tweets_dashboard.title: Twitter statistics
         
         ##Dashboard::normal chart
-        tweets_by_username.title: "Tweets by Username for #orocrm"
+        tweets_by_username.title: "Tweets by username for"
         
         ##Dashboard::line chart
-        tweets_over_time.title: "Tweets by over time for #orocrm"
+        tweets_over_time.title: "Tweets by over time for"
         
         ##Helper Formatter
         update_tweets.hashtag_not_specified: Hashtag is not specified

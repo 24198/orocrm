@@ -76,8 +76,10 @@ class RESTTransport {
                    
         //make the call via curl
         $feed = curl_init();
+        var_dump($options);
+        
         curl_setopt_array($feed, $options);
-        $responseJson = curl_exec($feed);
+        $responseJson = curl_exec($feed);        
         curl_close($feed);
 
         //return the raw json data

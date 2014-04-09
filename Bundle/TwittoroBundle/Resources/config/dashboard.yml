@@ -15,6 +15,7 @@ oro_dashboard_config:
         tweets_by_username:
             label:      tfone.twittoro.tweets_by_username.title
             route:      tfone_twittoro_dashboard_tweets_by_username_chart
+            route_parameters: { hashtag: bayman }
             acl:        tfone_twittoro_view
         tweets_over_time:
             label:      tfone.twittoro.tweets_over_time.title
