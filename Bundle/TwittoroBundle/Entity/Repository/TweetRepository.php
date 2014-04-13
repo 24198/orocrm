@@ -75,29 +75,74 @@ class TweetRepository extends EntityRepository
      * ORDER BY  `tweet_stamp` DESC 
      * LIMIT 0 , 10  
      */
-    public function getTweetsOverTime(AclHelper $aclHelper, $hashtag)
+    public function getTweetsOverTime(AclHelper $aclHelper, $hashtag, $timefilter)
     {
-  
+        //first store the user's default time zone so we can set it after we're done sniffing
+        //through the database
+        $defaultTimeZone = date_default_timezone_get();
+       
+        //we want to look for a value in the UTC timezone since the dates are stored this way :)
+        //@reference https://dev.mysql.com/doc/refman/5.0/en/datetime.html
+        date_default_timezone_set('UTC');
+        
+        //minute (last minute, option is meant for trends on twitter), hour (past hour), day (last day), week (last week)
+        //limits are, 1, 7, 24 and 60
+        switch($timefilter):
+            case 'minute':
+                $subStringCond = 'SUBSTRING(tt.tweetStamp,1,19) AS tweet_stamp';
+                $limit = date('Y-m-d H:i:s', (strtotime('-1 minutes')));
+                break;
+            case 'hour':
+                $subStringCond = 'SUBSTRING(tt.tweetStamp,1,16) AS tweet_stamp';
+                $limit = date('Y-m-d H:i:s', (strtotime('-1 hour')));
+                break;
+            case 'day':
+                $subStringCond = 'SUBSTRING(tt.tweetStamp,1,13) AS tweet_stamp';
+                $limit = date('Y-m-d H:i:00', strtotime('-24 hour'));
+                break;
+            case 'week':
+                $subStringCond = 'SUBSTRING(tt.tweetStamp,1,10) AS tweet_stamp';
+                $limit = date('Y-m-d 00:00:00', strtotime('-7 days'));
+                break;
+            default:
+                $subStringCond = 'SUBSTRING(tt.tweetStamp,1,10) AS tweet_stamp';
+                $limit = date('Y-m-d 00:00:00', strtotime('-7 days'));
+                break;
+        endswitch;
+        
         $hashtag = $this->formatHashtag($hashtag);
-        $qb = $this->createQueryBuilder('tt');
-        $qb->select('SUBSTRING(tt.tweetStamp,1,10) AS tweet_stamp', 'COUNT(tt.tweet) AS tweet_count')
-             ->where('tt.hashtag = :hashtag')
-             ->setParameter('hashtag', $hashtag)
-             ->groupBy('tweet_stamp')
-             ->orderBy('tt.tweetStamp', 'DESC')
-             ->setMaxResults(10);
 
+        $qb = $this->createQueryBuilder('tt');
+        $qb->select($subStringCond, 'COUNT(tt.tweet) AS tweet_count, tt.tweetStamp')
+             ->where('tt.hashtag = :hashtag')
+             ->andWhere('tt.tweetStamp >= :limit')
+             ->setParameter('hashtag', $hashtag)
+             ->setParameter('limit', $limit)   
+             ->groupBy('tweet_stamp')
+             ->orderBy('tt.tweetStamp', 'ASC');
         $data = $aclHelper->apply($qb)
              ->getArrayResult();
-        $_data = array_reverse($data);
-        $resultData = [];
-        $labels = [];
 
-        foreach ($_data as $index => $dataValue) {
+        //add a fake value as minimum of the resultData array
+        //otherwise the number of array indices are not corresponding (labels && resultData)
+        $resultData[] = [ 0 , 0 ];
+        
+        //add limit as minimum of the labels array
+        //format limit to correct date time and format it back as an string
+        $limitDate = new \DateTime($limit);
+        $limitDate->setTimezone(new \DateTimeZone($defaultTimeZone));
+        $labels = [0 => $limitDate->format('Y-m-d H:i:s')];
+        
+        foreach ($data as $index => $dataValue) {
+            $index++;
             $resultData[$index] = [$index, (int)$dataValue['tweet_count']];
-            $labels[$index] = $dataValue['tweet_stamp'];
-        }
+            $date = $dataValue['tweetStamp'];          
+            $date->setTimezone(new \DateTimeZone($defaultTimeZone));
+            $labels[$index] = $date->format('Y-m-d H:i:s');
 
+        }
+        //reset the timezone to user specific time zone
+        date_default_timezone_set($defaultTimeZone);
         return ['hashtag' => $hashtag, 'data' => $resultData, 'labels' => $labels];
     }    
     
@@ -237,15 +282,43 @@ class TweetRepository extends EntityRepository
         $resultData = [];
         foreach ($data as $record) {
             if($counter < 1 && !isset($record)) { 
-                $resultData[$counter] = [ 'topTweeter' => null ];
+                $resultData[$counter] = [ 'topTweeter' => null, 'hashtag' => $hashtag ];
             } else if($counter < 1) {
-                $resultData[$counter] = [ 'topTweeter' => $record['username'], 'label' => 'Top tweeter', 'tweetCount' => $record['tweet_count']];
+                $resultData[$counter] = [ 'topTweeter' => $record['username'], 'label' => 'Top tweeter', 'tweetCount' => $record['tweet_count'], 'hashtag' => $hashtag];
                 $counter++;
             }
         }        
      
         return $resultData;
     }    
+
+    /**
+     * Returns all known hashtags
+     *
+     * @return array
+     *      key = formatted hashtag
+     *      value = hashtag
+     */
+    public function getAllTweets() {
+        $qb = $this->createQueryBuilder('at');
+        $qb->select('at.hashtag')
+            ->orderBy('at.hashtag', 'DESC')
+            ->distinct();
+                
+        
+        $data = $qb->getQuery()         
+                    ->getResult();
+        
+        $hashtags = [];
+             
+        foreach($data as $record) {
+            $tmp = str_replace('#', '', $record['hashtag']);
+            $hashtags[$tmp] = $record['hashtag'];
+            
+        }
+        
+        return $hashtags;
+    }
     
     
     private function formatHashtag($hashtag) {

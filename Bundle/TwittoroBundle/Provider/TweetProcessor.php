@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Bundle\CronBundle\Command\Logger\OutputLogger;
+use Oro\Bundle\ConfigBundle\Config\UserConfigManager;
 
 use Tfone\Bundle\TwittoroBundle\Helpers\Formatter;
 use Tfone\Bundle\TwittoroBundle\Provider\RESTTransport;
@@ -41,6 +42,9 @@ class TweetProcessor {
     /** @var Translator */
     protected $translator;
     
+    /** @var UserConfigManager */
+    protected $userConfig;
+    
     /**
      * Construct the TweetProcessor
      * 
@@ -53,12 +57,14 @@ class TweetProcessor {
     public function __construct(
         Registry $doctrine,
         EntityManager $em,
+        UserConfigManager $userConfig,
         Translator $translator,
         Formatter $helper,
         RESTTransport $transport
     ) {    
         $this->doctrine = $doctrine;
         $this->em = $em;
+        $this->userConfig = $userConfig;
         $this->translator = $translator;
         $this->helper = $helper;
         $this->transport = $transport;
@@ -76,24 +82,23 @@ class TweetProcessor {
            $config['maxid'] = $maxId = $this->getMaxIdForHashtag($config['hashtag']);
         }
 
-        $tweetJsonData = $this->transport->call($config);
-        $tweetData = json_decode($tweetJsonData);
+        $tweetData = $this->transport->call($config);
 
         // if some error occured throw a new exception with the error code and the message
         // received from the api call.
-        if(isset($tweetData->errors)) {
-            foreach($tweetData->errors as $error){
-                throw new \Exception('['.$error->code.'] => '.$error->message);
+        if(isset($tweetData['errors'])) {
+            foreach($tweetData['errors'] as $error){
+                throw new \Exception('['.$error['code'].'] => '.$error['message']);
             }
         }   
         // if there are no tweets let the user know
-        if(count($tweetData->statuses) == 0) {
+        if(!isset($tweetData['statuses']) || count($tweetData['statuses']) == 0) {
             $this->logger->notice($this->getTranslator()->trans('tfone.twittoro.update_tweets.no_new_tweets_found'). ' '. $this->helper->formatHashtag($config['hashtag']));
             return;
         }
         $this->importTweets($tweetData, $config['hashtag']);
 
-        $this->logger->notice(count($tweetData->statuses). ' ' .$this->getTranslator()->trans('tfone.twittoro.update_tweets.tweets_have_been_created'));
+        $this->logger->notice(count($tweetData['statuses']). ' ' .$this->getTranslator()->trans('tfone.twittoro.update_tweets.tweets_have_been_created'));
  
     }
     /**
@@ -109,13 +114,14 @@ class TweetProcessor {
         $hashtag = $this->helper->formatHashtag($hashtag);  
         //$tweetData is an object of the stdClass..
         //can't handle this object as an array..
-        foreach($tweetData->statuses as $tweet) {          
+        foreach($tweetData['statuses'] as $tweet) {          
            //creating new tweet entity
            $tweetEntity = new Tweet();
-           
+
            $tweetEntity->setUsername(mb_convert_encoding($tweet->user->screen_name, "UTF-8"));
            $tweetEntity->setTweet(mb_convert_encoding($tweet->text, "UTF-8"));
-           $tweetEntity->setRetweets((int)$tweet->retweet_count);          
+           $tweetEntity->setRetweets((int)$tweet->retweet_count);
+
            $tweetEntity->setTweetStamp(new \DateTime($tweet->created_at));
            $tweetEntity->setHashtag(mb_convert_encoding($hashtag, "UTF-8"));
            $tweetEntity->setMaxId($tweet->id_str);

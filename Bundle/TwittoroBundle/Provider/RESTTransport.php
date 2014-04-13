@@ -13,13 +13,17 @@ use Tfone\Bundle\TwittoroBundle\Helpers\Formatter;
  */
 class RESTTransport {
     
-    /* @var basic url for the api request */
+    /** @var basic url for the api request */
     protected $_baseUrl;
-    /* @var constructed url with additional parameters */
+    
+    /** @var constructed url with additional parameters */
     protected $_url;
  
-    /* @var Formatter */
+    /** @var Formatter */
     protected $helper;
+    
+    /** @var array result from the calls */
+    protected $result = array();
     
     public function __construct(Formatter $helper) {
         $this->helper = $helper;
@@ -55,9 +59,7 @@ class RESTTransport {
             $this->_url = $this->_url . '&since_id=' . rawurlencode($config['maxid']);
             $oauth = array_merge($oauth, array('since_id' => $config['maxid']));
         }
-        
-        
-        
+          
         //add the count parameter as the last parameter
         $this->_url .= '&count='.rawurlencode('100');
         $oauthFull = array_merge($oauth, array('count' => '100'));
@@ -77,12 +79,21 @@ class RESTTransport {
         //make the call via curl
         $feed = curl_init();        
         curl_setopt_array($feed, $options);
-        $responseJson = curl_exec($feed);        
+        $responseJson = curl_exec($feed);  
         curl_close($feed);
-
-        //return the raw json data
-        return $responseJson;
-
+        
+        $result = json_decode($responseJson);
+        file_put_contents('/Users/hotlander/Development/orocrm/app/logs/result.log',"timestamp: ". date('Y-m-d H:i:s', time()) . 
+                           " max id: ".$config['maxid'].
+                            " statuses count: ". count($result->statuses) . "\n", FILE_APPEND);
+        if(count($result->statuses) != 0) {
+            $config['maxid'] = $this->findMaxId(json_decode($responseJson));
+            
+            $this->result = array_merge($this->result, (array)$result);
+            $this->call($config);
+        }
+        //return decoded json
+        return $this->result;
     }
     
     /**
@@ -120,5 +131,23 @@ class RESTTransport {
 
         $r .= implode(', ', $values); 
         return $r; 
-    }           
+    }    
+    
+    /**
+     * get the max id for the current request
+     */
+    protected function findMaxId($tweetData) {
+        $maxId = null;
+        if(count($tweetData->statuses) != 0) {
+            $i=0;
+            foreach ($tweetData->statuses as $tweet) {
+                if($i == 0) {
+                    $maxId = $tweet->id_str;
+                }
+                $i++;
+            }
+        }
+        
+        return $maxId;
+    }
 }

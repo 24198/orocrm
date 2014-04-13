@@ -18,6 +18,31 @@
 
     {% if hasData %}    
         <div class="chart-container">
+                    <div class="clearfix">
+                        <div class="dashboard-selector-container pull-right">
+                            <label for="time_selector">{{ 'Period'|trans }}:</label>
+                            <select id="time_selector">
+                                {% for name,label in timeFilters %}
+                                    <option value="{{ name }}"{% if name == seletedTimeFilter %} selected="selected"{% endif %}>{{ label|trans }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        require(['jquery', 'routing','oroui/js/widget-manager'],
+                        function($, routing, widgetManager){
+                            $(function () {
+                                $('#time_selector').on('change', function (e) {
+                                    var timeFilter = $(e.currentTarget).val();
+                                    widgetManager.getWidgetInstance({{ widgetId|json_encode|raw }}, function(widget) {
+                                        var url = routing.generate('tfone_twittoro_dashboard_tweets_over_time_chart', {widget: 'tweets_over_time', timeFilter: timeFilter}) + '?switch_period=true';
+                                        widget.setUrl(url);
+                                        widget.render();
+                                    });
+                                });
+                            });
+                        });
+                    </script>
             <div class="clearfix">
                 <div id="{{ widgetId }}-chart" class="bar-chart chart pull-left"></div>
             </div>
@@ -45,6 +70,7 @@
                                 return;
                             }
                             var xLabels = {{ items.labels|json_encode|raw }};
+                            console.log(xLabels);
                             var colors = {{ chartColors|json_encode|raw }};
                             colors.push('#F5BC25');
 
@@ -70,7 +96,8 @@
                                         track : true,
                                         relative : true,
                                         trackFormatter: function (data) {
-                                            console.log(xLabels[data.x]);
+                                            console.log('data');
+                                            console.log(data);
                                             return xLabels[parseInt(data.x)] + ': ' + parseInt(data.y);
                                         }
                                     },
@@ -82,10 +109,12 @@
                                         }
                                     },
                                     xaxis: {
-                                        noTicks: 10,
+                                        mode: 'time',
+                                        timeMode:'UTC',
+{#                                        min: xLabels[0],#}
                                         tickFormatter: function (x) {
-
-                                            return xLabels[parseInt(x)];
+                                            console.log(x);
+                                            return xLabels[x];
                                         }
                                     },
                                     grid: {

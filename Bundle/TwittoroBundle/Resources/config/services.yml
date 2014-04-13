@@ -22,6 +22,7 @@ services:
         arguments:
             - @doctrine
             - @doctrine.orm.entity_manager
+            - @oro_config.user
             - @translator
             - @tfone_twittoro.helper_formatter
             - @tfone_twittoro.rest_transport

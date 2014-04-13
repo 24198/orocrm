@@ -1,0 +1,31 @@
+{% block content %}
+    {% if dashboards|length > 1 %}
+        <div class="dashboard-selector-container">
+            <label for="dashboard_selector">{{ 'Hashtags'|trans }}:</label>
+            <select id="dashboard_selector">
+                {% for name,label in dashboards %}
+                    <option value="{{ name }}"{% if name == dashboardName %} selected="selected"{% endif %}>{{ label|trans }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <script type="text/javascript">
+            require(['jquery', 'routing', 'oronavigation/js/navigation'],
+            function($, routing, Navigation){
+                $(function () {
+                    $('#dashboard_selector').on('change', function (e) {
+                        var url = routing.generate('oro_dashboard_index', {name: $(e.currentTarget).val()}),
+                            navigation = Navigation.getInstance();
+                        if (navigation) {
+                            navigation.processRedirect({
+                                fullRedirect: false,
+                                location: url
+                            });
+                        } else {
+                            location.href = url;
+                        }
+                    });
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}
