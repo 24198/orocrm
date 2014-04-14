@@ -32,7 +32,3 @@ please note that the hashtag is specified without the '#' character, keep this i
 Tweets from the api who are older than 9 days will not be updated.
 Twitter only indexes the tweets between 0 - 9 days (source)
 So if some of the tweets do not show up in your initial update, this is probably the cause.
-
-
-#Features will be added in a short while, including:
-- 
