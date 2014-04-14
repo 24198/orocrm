@@ -3,6 +3,7 @@
 namespace Tfone\Bundle\TwittoroBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 use Tfone\Bundle\TwittoroBundle\Helpers\Formatter; 

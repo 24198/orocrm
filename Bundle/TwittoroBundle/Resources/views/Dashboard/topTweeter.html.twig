@@ -9,44 +9,42 @@
         {% endif %}
         {% set selectedHashtag = tweet['hashtag'] %}
     {% endfor %}
+    {% if hashtags|length > 1 %}
+        <div class="dashboard-selector-container pull-right" style="margin-right:33px; margin-top:15px;">
+            <label for="hashtag_selector">{{ 'Hashtags'|trans }}:</label>
+            <select id="hashtag_selector">
+                {% for name,label in hashtags %}
+                    <option value="{{ name }}"{% if label == selectedHashtag %} selected="selected"{% endif %}>{{ label|trans }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <script type="text/javascript">
+            require(['jquery', 'routing','oroui/js/widget-manager'],
+            function($, routing, widgetManager){
+                $(function () {
+                    $('#hashtag_selector').on('change', function (e) {
+                        var hashtag = $(e.currentTarget).val();
+                        var url = routing.generate('tfone_twittoro_dashboard_top_tweeter_widget', { hashtag: hashtag }) + '?switch_hashtag=true';  
+                        widgetManager.getWidgetInstance({{ widgetId|json_encode|raw }}, function(widget) {
+                            widget.setUrl(url);
+                            widget.render();
+                        });
+                    });
+                });
+            });
+        </script>
+    {% endif %}
     {% if hasData %}
         {% set itemWidth = items|length > 0 ? (100 / items|length)|round(1) : 100 %}
         <ul class="quick-launchpad-toolbar"> 
             {% for item in items %}
                 <li style="width: {{ loop.last ? 100 - ((items|length - 1) * itemWidth) : itemWidth }}%">
-                {% if hashtags|length > 1 %}
-                    <div class="dashboard-selector-container pull-right">
-                        <label for="hashtag_selector">{{ 'Hashtags'|trans }}:</label>
-                        <select id="hashtag_selector">
-                            {% for name,label in hashtags %}
-                                <option value="{{ name }}"{% if label == selectedHashtag %} selected="selected"{% endif %}>{{ label|trans }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <script type="text/javascript">
-                        require(['jquery', 'routing','oroui/js/widget-manager'],
-                        function($, routing, widgetManager){
-                            $(function () {
-                                $('#hashtag_selector').on('change', function (e) {
-                                    var hashtag = $(e.currentTarget).val();
-                                    var url = routing.generate('tfone_twittoro_dashboard_top_tweeter_widget', { hashtag: hashtag }) + '?switch_hashtag=true';  
-                                    widgetManager.getWidgetInstance({{ widgetId|json_encode|raw }}, function(widget) {
-                                        widget.setUrl(url);
-                                        widget.render();
-                                    });
-                                });
-                            });
-                        });
-                    </script>
-                {% endif %}
-                    <a href="#">
                         <span class="title-box">
                             <span style="color:#F5BC25">{{item.label}}</span>
                             <h3>{{item.topTweeter}}</h3></span>
                         <span class="list-content">
                             <b><span class="top-tweeter">Total tweets {{item.tweetCount}}</span></b>
                         </span>
-                    </a>
                 </li>
             {% endfor %}
         </ul>

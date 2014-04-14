@@ -9,40 +9,41 @@
 {% endif %}
 
 {% block content %}
+    {% block selector_widget %}
+        <div class="clearfix">
+            <div class="dashboard-selector-container pull-right" style="margin-right: 33px;">
+                <label for="time_selector">{{ 'Period'|trans }}:</label>
+                <select id="time_selector">
+                    {% for name,label in timeFilters %}
+                        <option value="{{ name }}"{% if name == seletedTimeFilter %} selected="selected"{% endif %}>{{ label|trans }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>    
+        <script type="text/javascript">
+            require(['jquery', 'routing','oroui/js/widget-manager'],
+            function($, routing, widgetManager){
+                $(function () {
+                    $('#time_selector').on('change', function (e) {
+                        var timeFilter = $(e.currentTarget).val();
+                        widgetManager.getWidgetInstance({{ widgetId|json_encode|raw }}, function(widget) {
+                            var url = routing.generate('tfone_twittoro_dashboard_tweets_over_time_chart', {widget: 'tweets_over_time', timeFilter: timeFilter}) + '?switch_period=true';
+                            widget.setUrl(url);
+                            widget.render();
+                        });
+                    });
+                });
+            });
+        </script>    
+    {% endblock %}
     {% set hasData = false %}
     {% for tweet in items.data %}
         {% if tweet[1] and tweet[1] > 0 %}
             {% set hasData = true %}
         {% endif %}
-    {% endfor %}
-
+    {% endfor %}        
     {% if hasData %}    
-        <div class="chart-container">
-                    <div class="clearfix">
-                        <div class="dashboard-selector-container pull-right">
-                            <label for="time_selector">{{ 'Period'|trans }}:</label>
-                            <select id="time_selector">
-                                {% for name,label in timeFilters %}
-                                    <option value="{{ name }}"{% if name == seletedTimeFilter %} selected="selected"{% endif %}>{{ label|trans }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <script type="text/javascript">
-                        require(['jquery', 'routing','oroui/js/widget-manager'],
-                        function($, routing, widgetManager){
-                            $(function () {
-                                $('#time_selector').on('change', function (e) {
-                                    var timeFilter = $(e.currentTarget).val();
-                                    widgetManager.getWidgetInstance({{ widgetId|json_encode|raw }}, function(widget) {
-                                        var url = routing.generate('tfone_twittoro_dashboard_tweets_over_time_chart', {widget: 'tweets_over_time', timeFilter: timeFilter}) + '?switch_period=true';
-                                        widget.setUrl(url);
-                                        widget.render();
-                                    });
-                                });
-                            });
-                        });
-                    </script>
+        <div class="chart-container">                   
             <div class="clearfix">
                 <div id="{{ widgetId }}-chart" class="bar-chart chart pull-left"></div>
             </div>
